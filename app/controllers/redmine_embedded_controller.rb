@@ -31,6 +31,7 @@ class RedmineEmbeddedController < ApplicationController
   
   def index
     file = params[:request_path]
+    file +=  "." + params[:format] if params[:format]
     path = get_real_path(file)
     if File.directory?(path)
       file = get_index_file(path)
@@ -52,7 +53,7 @@ class RedmineEmbeddedController < ApplicationController
     end
     
   rescue Errno::ENOENT => e
-    @content = "No documentation found"
+    @content = "No documentation found : " + e.message
     @title = ""
     render :index
   rescue Errno::EACCES => e
@@ -113,6 +114,9 @@ class RedmineEmbeddedController < ApplicationController
     real = File.join(real, path) unless path.nil? || path.empty?
     dir = File.expand_path(get_project_directory)
     real = File.expand_path(real)
+    aa = ""
+    params.each {|k,v| aa += "#{k}=#{v}," }
+    raise Errno::ENOENT,"file not exist " + real + "params: " + aa unless File.exist?(real)
     raise Errno::ENOENT unless real.starts_with?(dir) && File.exist?(real)
     real
   end
