@@ -48,6 +48,8 @@ class RedmineEmbeddedController < ApplicationController
     
     if Redmine::MimeType.is_type?('image', path)
       send_file path, :disposition => 'inline', :type => Redmine::MimeType.of(path)
+    elsif Redmine::MimeType.is_type?('application', path)
+      send_file path, :disposition => 'inline', :type => Redmine::MimeType.of(path)
     else
       embed_file path
     end
